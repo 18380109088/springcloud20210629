@@ -1,0 +1,28 @@
+server:
+  port: 8888
+  
+spring:
+  application:
+    name: eureka
+ 
+#安全中心设置  
+security: 
+  basic: 
+    enable: true
+  user: 
+    name: root
+    password: root   
+ 
+#注册中心指向    
+eureka:
+  instance:
+    appname: ${spring.application.name}                    #注册服务名（默认：也是该值）
+    instance-id: ${spring.application.name}:${server.port} #同一服务名称下，必须不一致（默认：ip+名称+端口）
+  server:
+    eviction-interval-timer-in-ms: 60000 #清理无效节点,默认60*1000毫秒,即60秒
+    enable-self-preservation: false      #false 关闭保护（集群建议关闭）
+  client: 
+    register-with-eureka: true #是否注册（默认 true）
+    fetch-registry: true       #服务能否被发现（默认 true）
+    service-url: 
+      defaultZone: http://${security.user.name}:${security.user.password}@127.0.0.1:8888/eureka/      

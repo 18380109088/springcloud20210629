@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.cme</groupId>
+  <artifactId>springcloud</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging><!-- 打pom包 -->
+
+	<!-- 建议用1.4.0以后的版本之前的不能可能导致部分功能不能使用 包冲突 会出现注册问题  -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-parent</artifactId>
+	    <version>1.5.1.RELEASE</version>
+	</parent>
+	
+	<!-- spring-cloud所有项目依赖包 -->
+	<dependencyManagement><!-- 统一版本声明的标签 -->
+		<dependencies>
+	        <dependency>
+	            <groupId>org.springframework.cloud</groupId>
+	            <artifactId>spring-cloud-dependencies</artifactId>
+	            <version>Dalston.SR3</version><!-- eureka版本，3.0后面版本稳定 -->
+	            <type>pom</type>
+	            <scope>import</scope>
+	        </dependency>
+		</dependencies>
+	</dependencyManagement>
+ 
+ 
+	<build>
+		<finalName>springcloud</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <encoding>utf-8</encoding>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+	<modules>
+		<module>springcloud-eureka</module>
+		<module>springcloud-consumer</module>
+		<module>springcloud-provider</module>
+    <module>springcloud-zuul</module>
+  </modules>
+</project>

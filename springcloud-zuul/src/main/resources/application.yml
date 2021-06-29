@@ -1,0 +1,63 @@
+server:
+  port: 8072
+  
+spring:
+  application:
+    name: zuul
+
+#负载均衡（超时时间，理论要大于应用的·超时时间）
+ribbon:
+  OkToRetryOnAllOperations: false # false（默认）对get请求重试，true也对 post、put等请求重试
+  ReadTimeout: 5000               # 超时时间，默认值5000ms
+  ConnectTimeout: 3000            # 请求连接（连接注册中心）的超时时间，默认值2000ms
+  MaxAutoRetries: 0               # 对当前实例的重试次数，默认0
+  MaxAutoRetriesNextServer: 1     # 对切换实例的重试次数，默认1
+
+#断路器（超时时间，理论要大于应用的·超时时间）
+feign:
+  hystrix:
+    enabled: true #启用断路器（配置）
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true # 如果enabled设置为false，则请求超时交给ribbon控制,为true,则超时作为熔断根据
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000 # 断路器超时时间，默认1000ms，一般要大于负载均衡超时时间
+    #断路设置
+    circuitBreaker:
+      requestVolumeThreshold: 20     # 当在配置时间窗口内达到此数量的失败后，进行短路。默认20个
+      sleepWindowInMilliseconds: 50  # 短路多久以后开始尝试是否恢复，默认5s
+      errorThresholdPercentage: 50%  # 出错百分比阈值，当达到此阈值后，开始短路。默认50%
+
+
+# 路径（path）可使用的通配符有： * ** ?
+# ? 单个字符
+# * 任意多个字符，不包含多级路径
+# ** 任意多个字符，包含多级路径
+zuul:
+  routes:
+    ribbon:
+      path: /ribbon/**
+      serviceId: consumer  # 转发到消费者 /ribbon/
+    feign:
+      path: /feign/**
+      serviceId: consumer  # 转发到消费者 /feign/
+
+ 
+#安全中心设置  
+security: 
+  user: 
+    name: root
+    password: root  
+
+#注册中心指向    
+eureka:
+  instance:
+    appname: ${spring.application.name}                    #注册服务名（默认：也是该值）
+    instance-id: ${spring.application.name}:${server.port} #同一服务名称下，必须不一致（默认：ip+名称+端口）
+  client: 
+    service-url: 
+      defaultZone: http://${security.user.name}:${security.user.password}@127.0.0.1:8888/eureka/
